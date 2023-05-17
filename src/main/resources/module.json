@@ -1,0 +1,10 @@
+{
+  "group": "me.whereareiam.cloudnet.modules",
+  "name": "${project.name}",
+  "version": "${project.version}",
+  "author": "whereareiam",
+  "main": "me.whereareiam.whreplacer.Main",
+  "description": "Replaces placeholders in templates",
+  "dependencies": [],
+  "repos": []
+}

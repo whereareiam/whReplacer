@@ -1,0 +1,27 @@
+placeholders:
+
+  #Example 1: Per task replacing
+  example: #Should be different from other names.
+    placeholder: '%task_name' #The placeholder we are looking for in files.
+    value: 'Task name!' #To what the placeholder will be replaced.
+                        #There are internal placeholders that can be used for "value".
+                        # %service_name% , %task_name% , %node_id%
+
+    tasks: #A list of tasks on which the placeholder will be replaced.
+      Proxy: #Name of the task.
+        - 'plugins/luckperms/config.yml' #The direct path to the file in which to search for a placeholder
+      Lobby:
+        - 'plugins/LuckPerms/config.yml'
+
+
+  #Example 2: Per service replacing
+  example1: #Should be different from other names.
+    services: #A list of services on which the placeholder will be replaced.
+      Proxy-1: #Name of the service.
+        placeholder: '%example' #The placeholder we are looking for in files.
+        value: 'Sheesh!' #To what the placeholder will be replaced.
+                         #There are internal placeholders that can be used for "value".
+                         # %service_name% , %task_name% , %node_id%
+
+        paths:
+          - 'plugins/luckperms/config.yml' #The direct path to the file in which to search for a placeholder
