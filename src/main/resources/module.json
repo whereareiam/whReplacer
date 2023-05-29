@@ -3,7 +3,7 @@
   "name": "${project.name}",
   "version": "${project.version}",
   "author": "whereareiam",
-  "main": "me.whereareiam.whreplacer.Main",
+  "main": "me.whereareiam.whreplacer.Replacer",
   "description": "Replaces placeholders in templates",
   "dependencies": [],
   "repos": []

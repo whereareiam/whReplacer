@@ -4,17 +4,13 @@ import de.dytanic.cloudnet.command.sub.SubCommand;
 import de.dytanic.cloudnet.command.sub.SubCommandArgumentTypes;
 import de.dytanic.cloudnet.command.sub.SubCommandBuilder;
 import de.dytanic.cloudnet.command.sub.SubCommandHandler;
-import me.whereareiam.whreplacer.Main;
+import me.whereareiam.whreplacer.Replacer;
 import me.whereareiam.whreplacer.replacer.PlaceholderReplacer;
 
 import java.io.IOException;
 
 public final class ReloadCommand extends SubCommandHandler {
-
-    private final Main module;
-    private final PlaceholderReplacer placeholderReplacer;
-
-    public ReloadCommand(Main module, PlaceholderReplacer placeholderReplacer) {
+    public ReloadCommand(Replacer module, PlaceholderReplacer placeholderReplacer) {
         super(SubCommandBuilder.create()
                 .generateCommand((subCommand, sender, command, args, commandLine, properties, internalProperties) -> {
                     try {
@@ -33,7 +29,5 @@ public final class ReloadCommand extends SubCommandHandler {
         this.prefix = "whreplacer";
         this.description = module.getConfigManager().getString("messages.reload-description");
 
-        this.module = module;
-        this.placeholderReplacer = placeholderReplacer;
     }
 }

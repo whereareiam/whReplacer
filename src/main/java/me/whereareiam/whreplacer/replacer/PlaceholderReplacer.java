@@ -1,22 +1,16 @@
 package me.whereareiam.whreplacer.replacer;
 
 import de.dytanic.cloudnet.event.service.CloudServicePreStartEvent;
-import me.whereareiam.whreplacer.Main;
+import me.whereareiam.whreplacer.Replacer;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
 import java.util.List;
 import java.util.Map;
 
 public class PlaceholderReplacer {
-
-    private final Main module;
+    private final Replacer module;
     private Map<String, Map<String, Map<String, Object>>> replacements;
 
-    public PlaceholderReplacer(Main module) {
+    public PlaceholderReplacer(Replacer module) {
         this.module = module;
     }
 
@@ -24,6 +18,7 @@ public class PlaceholderReplacer {
         replacements = module.getReplacementsManager().getAllReplacements();
     }
 
+    @SuppressWarnings("unchecked")
     public void replacePlaceholders(CloudServicePreStartEvent event) {
         String task = event.getCloudService().getServiceId().getTaskName();
         String service = event.getCloudService().getServiceId().getName();

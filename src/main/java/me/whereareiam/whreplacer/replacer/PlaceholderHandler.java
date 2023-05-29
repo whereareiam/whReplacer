@@ -2,6 +2,7 @@ package me.whereareiam.whreplacer.replacer;
 
 import de.dytanic.cloudnet.event.service.CloudServicePreStartEvent;
 import me.whereareiam.whreplacer.utils.FileUtils;
+import me.whereareiam.whreplacer.utils.InternalPlaceholder;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -11,7 +12,6 @@ import java.util.List;
 import java.util.Map;
 
 public class PlaceholderHandler {
-
     private final CloudServicePreStartEvent event;
 
     public PlaceholderHandler(CloudServicePreStartEvent event) {
@@ -23,9 +23,7 @@ public class PlaceholderHandler {
             return;
         }
 
-        String serviceName = event.getCloudService().getServiceId().getName();
-        String nodeId = event.getCloudService().getServiceId().getNodeUniqueId();
-        value = InternalPlaceholder.replaceInternalPlaceholders(value, task, serviceName, nodeId);
+        value = InternalPlaceholder.replaceInternalPlaceholders(value, event);
 
         List<String> taskPaths = tasks.get(task);
         replacePlaceholdersInFiles(placeholder, value, taskPaths);
@@ -36,19 +34,18 @@ public class PlaceholderHandler {
                 && value != null && !value.isEmpty();
     }
 
+    @SuppressWarnings("unchecked")
     public void processService(String service, Map<String, Map<String, Object>> services) {
         Map<String, Object> serviceData = services.get(service);
         if (!services.containsKey(service) || !isValidServiceData(serviceData)) {
             return;
         }
 
-        String taskName = event.getCloudService().getServiceId().getTaskName();
-        String nodeId = event.getCloudService().getServiceId().getNodeUniqueId();
         String placeholder = (String) serviceData.get("placeholder");
         String value = (String) serviceData.get("value");
         List<String> servicePaths = (List<String>) serviceData.get("paths");
 
-        value = InternalPlaceholder.replaceInternalPlaceholders(value, taskName, service, nodeId);
+        value = InternalPlaceholder.replaceInternalPlaceholders(value, event);
 
         replacePlaceholdersInFiles(placeholder, value, servicePaths);
     }

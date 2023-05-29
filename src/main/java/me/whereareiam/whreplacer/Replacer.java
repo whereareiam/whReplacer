@@ -11,7 +11,7 @@ import me.whereareiam.whreplacer.listeners.PreServiceStartListener;
 
 import java.io.IOException;
 
-public final class Main extends NodeCloudNetModule {
+public final class Replacer extends NodeCloudNetModule {
     private ConfigManager configManager;
     private ReplacementsManager replacementsManager;
     private PlaceholderReplacer placeholderReplacer;
@@ -37,19 +37,11 @@ public final class Main extends NodeCloudNetModule {
         this.registerCommand(new ReloadCommand(this, placeholderReplacer));
     }
 
-    @ModuleTask(event = ModuleLifeCycle.STOPPED)
-    public void onUnLoad() {
-    }
-
     public ConfigManager getConfigManager() {
         return configManager;
     }
 
     public ReplacementsManager getReplacementsManager() {
         return replacementsManager;
-    }
-
-    public PlaceholderReplacer getPlaceholderReplacer() {
-        return placeholderReplacer;
     }
 }
