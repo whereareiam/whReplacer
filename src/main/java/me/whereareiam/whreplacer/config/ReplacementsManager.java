@@ -9,7 +9,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class ReplacementsManager {
-
     private static final String DEFAULT_REPLACEMENTS_FILE_NAME = "default.yml";
     private final Path replacementsFolder;
 

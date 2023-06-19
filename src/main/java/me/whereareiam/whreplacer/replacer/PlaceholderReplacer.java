@@ -1,6 +1,7 @@
 package me.whereareiam.whreplacer.replacer;
 
-import de.dytanic.cloudnet.event.service.CloudServicePreStartEvent;
+import eu.cloudnetservice.node.event.service.CloudServicePrePrepareEvent;
+import jakarta.inject.Inject;
 import me.whereareiam.whreplacer.Replacer;
 
 import java.util.List;
@@ -10,8 +11,10 @@ public class PlaceholderReplacer {
     private final Replacer module;
     private Map<String, Map<String, Map<String, Object>>> replacements;
 
+    @Inject
     public PlaceholderReplacer(Replacer module) {
         this.module = module;
+        loadReplacements();
     }
 
     public void loadReplacements() {
@@ -19,9 +22,14 @@ public class PlaceholderReplacer {
     }
 
     @SuppressWarnings("unchecked")
-    public void replacePlaceholders(CloudServicePreStartEvent event) {
-        String task = event.getCloudService().getServiceId().getTaskName();
-        String service = event.getCloudService().getServiceId().getName();
+    public void replacePlaceholders(CloudServicePrePrepareEvent event) {
+        if(replacements == null){
+            System.err.println("Replacements Map is not loaded yet");
+            return;
+        }
+
+        String taskName = event.service().serviceId().taskName();
+        String serviceName = event.service().serviceId().name();
 
         if (!replacements.containsKey("placeholders")) {
             return;
@@ -38,12 +46,12 @@ public class PlaceholderReplacer {
                 String placeholder = (String) placeholderData.get("placeholder");
                 String value = (String) placeholderData.get("value");
                 Map<String, List<String>> tasks = (Map<String, List<String>>) placeholderData.get("tasks");
-                placeholderHandler.processTask(task, placeholder, value, tasks);
+                placeholderHandler.processTask(taskName, placeholder, value, tasks);
             }
 
             if (placeholderData.containsKey("services")) {
                 Map<String, Map<String, Object>> services = (Map<String, Map<String, Object>>) placeholderData.get("services");
-                placeholderHandler.processService(service, services);
+                placeholderHandler.processService(serviceName, services);
             }
         }
     }

@@ -1,6 +1,6 @@
 package me.whereareiam.whreplacer.replacer;
 
-import de.dytanic.cloudnet.event.service.CloudServicePreStartEvent;
+import eu.cloudnetservice.node.event.service.CloudServicePrePrepareEvent;
 import me.whereareiam.whreplacer.utils.FileUtils;
 import me.whereareiam.whreplacer.utils.InternalPlaceholder;
 
@@ -12,20 +12,20 @@ import java.util.List;
 import java.util.Map;
 
 public class PlaceholderHandler {
-    private final CloudServicePreStartEvent event;
+    private final CloudServicePrePrepareEvent event;
 
-    public PlaceholderHandler(CloudServicePreStartEvent event) {
+    public PlaceholderHandler(CloudServicePrePrepareEvent event) {
         this.event = event;
     }
 
-    public void processTask(String task, String placeholder, String value, Map<String, List<String>> tasks) {
-        if (!tasks.containsKey(task) || !isValidTaskData(placeholder, value)) {
+    public void processTask(String taskName, String placeholder, String value, Map<String, List<String>> tasks) {
+        if (!tasks.containsKey(taskName) || !isValidTaskData(placeholder, value)) {
             return;
         }
 
         value = InternalPlaceholder.replaceInternalPlaceholders(value, event);
 
-        List<String> taskPaths = tasks.get(task);
+        List<String> taskPaths = tasks.get(taskName);
         replacePlaceholdersInFiles(placeholder, value, taskPaths);
     }
 
@@ -35,9 +35,9 @@ public class PlaceholderHandler {
     }
 
     @SuppressWarnings("unchecked")
-    public void processService(String service, Map<String, Map<String, Object>> services) {
-        Map<String, Object> serviceData = services.get(service);
-        if (!services.containsKey(service) || !isValidServiceData(serviceData)) {
+    public void processService(String serviceName, Map<String, Map<String, Object>> services) {
+        Map<String, Object> serviceData = services.get(serviceName);
+        if (!services.containsKey(serviceName) || !isValidServiceData(serviceData)) {
             return;
         }
 
@@ -58,7 +58,7 @@ public class PlaceholderHandler {
 
     private void replacePlaceholdersInFiles(String placeholder, String value, List<String> paths) {
         for (String path : paths) {
-            Path filePath = Paths.get(event.getCloudService().getDirectoryPath() + "/" + path);
+            Path filePath = Paths.get(event.service().directory() + "/" + path);
             if (!Files.exists(filePath)) {
                 continue;
             }

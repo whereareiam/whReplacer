@@ -1,33 +1,40 @@
 package me.whereareiam.whreplacer.commands;
 
-import de.dytanic.cloudnet.command.sub.SubCommand;
-import de.dytanic.cloudnet.command.sub.SubCommandArgumentTypes;
-import de.dytanic.cloudnet.command.sub.SubCommandBuilder;
-import de.dytanic.cloudnet.command.sub.SubCommandHandler;
+import cloud.commandframework.annotations.CommandDescription;
+import cloud.commandframework.annotations.CommandMethod;
+import cloud.commandframework.annotations.CommandPermission;
+import eu.cloudnetservice.node.command.source.CommandSource;
 import me.whereareiam.whreplacer.Replacer;
+import me.whereareiam.whreplacer.config.ConfigManager;
+import me.whereareiam.whreplacer.config.ReplacementsManager;
 import me.whereareiam.whreplacer.replacer.PlaceholderReplacer;
 
+import javax.annotation.Nonnull;
 import java.io.IOException;
 
-public final class ReloadCommand extends SubCommandHandler {
-    public ReloadCommand(Replacer module, PlaceholderReplacer placeholderReplacer) {
-        super(SubCommandBuilder.create()
-                .generateCommand((subCommand, sender, command, args, commandLine, properties, internalProperties) -> {
-                    try {
-                        module.getConfigManager().loadConfig();
-                        module.getReplacementsManager().loadReplacements();
-                        placeholderReplacer.loadReplacements();
-                        sender.sendMessage(module.getConfigManager().getString("messages.reload-successful"));
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                        sender.sendMessage(module.getConfigManager().getString("messages.reload-failure"));
-                    }
-                }, SubCommand::onlyConsole, SubCommandArgumentTypes.anyStringIgnoreCase("reload"))
-                .getSubCommands(), "whreplacer");
-        this.usage = "whreplacer reload";
-        this.permission = "whreplacer.command.reload";
-        this.prefix = "whreplacer";
-        this.description = module.getConfigManager().getString("messages.reload-description");
+@CommandPermission("privilege.10")
+@CommandDescription("Reloads the whreplacer configurations and replacements")
+public class ReloadCommand {
+    private final PlaceholderReplacer placeholderReplacer;
+    private final ConfigManager configManager;
+    private final ReplacementsManager replacementsManager;
 
+    public ReloadCommand(Replacer module, PlaceholderReplacer placeholderReplacer) {
+        this.placeholderReplacer = placeholderReplacer;
+        this.configManager = module.getConfigManager();
+        this.replacementsManager = module.getReplacementsManager();
+    }
+
+    @CommandMethod("whreplacer reload")
+    public void handleReload(@Nonnull CommandSource source) {
+        try {
+            this.configManager.loadConfig();
+            this.replacementsManager.loadReplacements();
+            this.placeholderReplacer.loadReplacements();
+            source.sendMessage(this.configManager.getString("messages.reload-successful"));
+        } catch (IOException e) {
+            e.printStackTrace();
+            source.sendMessage(this.configManager.getString("messages.reload-failure"));
+        }
     }
 }

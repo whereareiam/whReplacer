@@ -1,10 +1,12 @@
 {
-  "group": "me.whereareiam.cloudnet.modules",
-  "name": "${project.name}",
-  "version": "${project.version}",
-  "author": "whereareiam",
+  "runtimeModule": false,
+  "storesSensitiveData": false,
   "main": "me.whereareiam.whreplacer.Replacer",
+  "name": "${project.name}",
+  "group": "me.whereareiam.cloudnet.modules",
+  "author": "whereareiam",
+  "version": "${project.version}",
+  "website": "whereareiam.me",
   "description": "Replaces placeholders in templates",
-  "dependencies": [],
-  "repos": []
+  "minJavaVersionId": 17
 }

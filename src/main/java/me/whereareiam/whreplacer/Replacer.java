@@ -1,26 +1,37 @@
 package me.whereareiam.whreplacer;
 
-import de.dytanic.cloudnet.driver.module.ModuleLifeCycle;
-import de.dytanic.cloudnet.driver.module.ModuleTask;
-import de.dytanic.cloudnet.module.NodeCloudNetModule;
+import eu.cloudnetservice.driver.event.EventManager;
+import eu.cloudnetservice.driver.module.ModuleLifeCycle;
+import eu.cloudnetservice.driver.module.ModuleTask;
+import eu.cloudnetservice.driver.module.driver.DriverModule;
+import eu.cloudnetservice.node.command.CommandProvider;
+import jakarta.inject.Inject;
 import me.whereareiam.whreplacer.commands.ReloadCommand;
 import me.whereareiam.whreplacer.config.ConfigManager;
 import me.whereareiam.whreplacer.config.ReplacementsManager;
+import me.whereareiam.whreplacer.listeners.CloudServicePrePrepareListener;
 import me.whereareiam.whreplacer.replacer.PlaceholderReplacer;
-import me.whereareiam.whreplacer.listeners.PreServiceStartListener;
 
+import javax.annotation.Nonnull;
 import java.io.IOException;
 
-public final class Replacer extends NodeCloudNetModule {
+public final class Replacer extends DriverModule {
     private ConfigManager configManager;
     private ReplacementsManager replacementsManager;
     private PlaceholderReplacer placeholderReplacer;
 
-    @ModuleTask(event = ModuleLifeCycle.LOADED, order = 1)
+    @Inject
+    public Replacer() {
+        this.configManager = new ConfigManager();
+        this.replacementsManager = new ReplacementsManager();
+    }
+
+    @ModuleTask(order = 50, lifecycle = ModuleLifeCycle.LOADED)
     public void onLoad() {
+        Replacer module = this;
         configManager = new ConfigManager();
         replacementsManager = new ReplacementsManager();
-        placeholderReplacer = new PlaceholderReplacer(this);
+        placeholderReplacer = new PlaceholderReplacer(module);
 
         try {
             configManager.loadConfig();
@@ -31,10 +42,10 @@ public final class Replacer extends NodeCloudNetModule {
         }
     }
 
-    @ModuleTask(event = ModuleLifeCycle.STARTED, order = 2)
-    public void onStart() {
-        this.getEventManager().registerListener(new PreServiceStartListener(placeholderReplacer));
-        this.registerCommand(new ReloadCommand(this, placeholderReplacer));
+    @ModuleTask(lifecycle = ModuleLifeCycle.STARTED)
+    public void onStart(@Nonnull CommandProvider commandProvider, @Nonnull EventManager eventManager) {
+        commandProvider.register(new ReloadCommand(this, placeholderReplacer));
+        eventManager.registerListener(CloudServicePrePrepareListener.class);
     }
 
     public ConfigManager getConfigManager() {
